@@ -8,7 +8,7 @@ Refract Technologies](https://refract.gg/), this project aims to create an alter
 
 Here is a footage that I first time testing the integration within Unity Editor and VRChat.
 
-![Demonstration](Demo/demonstration.mp4)
+https://user-images.githubusercontent.com/4715281/209565306-588c7894-ded9-435f-97d7-508176fb39d3.mp4
 
 In the actual build it does not need a Unity Editor, instead it is a standalone application (but still, the AXIS Control Center is requied).
 

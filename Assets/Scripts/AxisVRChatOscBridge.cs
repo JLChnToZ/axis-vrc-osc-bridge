@@ -82,7 +82,6 @@ public class AxisVRChatOscBridge : IDisposable {
         if (oscClient == null) return;
         int index = 1;
         var animator = animatorLink.Animator;
-        var pose = animatorLink.tPoseLocalRotations;
         // Head (Reference Point)
         ReportTrackerUpdate(animator, HumanBodyBones.Head, 0, "head", false);
         // Hip

@@ -823,7 +823,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -10, y: -10}
+  m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &119013473
 MonoBehaviour:
@@ -5785,7 +5785,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -10, y: -10}
+  m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1328430122
 MonoBehaviour:
@@ -6999,6 +6999,7 @@ GameObject:
   - component: {fileID: 1696818268}
   - component: {fileID: 1696818267}
   - component: {fileID: 1696818266}
+  - component: {fileID: 1696818269}
   m_Layer: 5
   m_Name: VRChat OSC Label
   m_TagString: Untagged
@@ -7066,7 +7067,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: AXIS VRChat OSC Bridge
+  m_text: '{0}'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7143,6 +7144,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1696818264}
   m_CullTransparentMesh: 1
+--- !u!114 &1696818269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696818264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f611f95d980bde34c94fe52f78334f26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1742942960
 GameObject:
   m_ObjectHideFlags: 0
@@ -8091,6 +8104,7 @@ GameObject:
   - component: {fileID: 1853428551}
   - component: {fileID: 1853428550}
   - component: {fileID: 1853428549}
+  - component: {fileID: 1853428552}
   m_Layer: 5
   m_Name: Notice
   m_TagString: Untagged
@@ -8158,12 +8172,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'AXIS-VRChat OSC Bridge 0.1 Alpha
+  m_text: '{0} V{1}
 
-    (C) Jeremy Lam aka. Vistanz 2022.
+    (C) Jeremy Lam aka. Vistanz 2022-2023.
 
-    This
-    software is not affiliated with Refract Technologies or VRChat, Inc.'
+    This software
+    is not affiliated with Refract Technologies or VRChat, Inc.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -8240,6 +8254,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1853428547}
   m_CullTransparentMesh: 1
+--- !u!114 &1853428552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853428547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f611f95d980bde34c94fe52f78334f26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1879870973
 GameObject:
   m_ObjectHideFlags: 0

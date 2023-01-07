@@ -78,35 +78,42 @@ public class AxisVRChatOscBridge : IDisposable {
         if (oscClient == null) return;
         int index = 1;
         var animator = animatorLink.Animator;
-        ReportTrackerUpdate(animator, HumanBodyBones.Head, "head");
-        ReportTrackerUpdate(animator, HumanBodyBones.Hips, ref index);
-        ReportTrackerUpdate(animator, HumanBodyBones.LeftFoot, ref index);
-        ReportTrackerUpdate(animator, HumanBodyBones.RightFoot, ref index);
-        ReportTrackerUpdate(animator, HumanBodyBones.Chest, ref index);
-        ReportTrackerUpdate(animator, HumanBodyBones.LeftUpperArm, ref index);
-        ReportTrackerUpdate(animator, HumanBodyBones.RightUpperArm, ref index);
-        ReportTrackerUpdate(animator, HumanBodyBones.LeftUpperLeg, ref index);
-        ReportTrackerUpdate(animator, HumanBodyBones.RightUpperLeg, ref index);
+        // Head (Reference Point)
+        ReportTrackerUpdate(animator, HumanBodyBones.Head, 0, "head");
+        // Hip
+        ReportTrackerUpdate(animator, HumanBodyBones.Hips, 0, ref index);
+        // Feet
+        ReportTrackerUpdate(animator, HumanBodyBones.LeftFoot, 0, ref index);
+        ReportTrackerUpdate(animator, HumanBodyBones.RightFoot, 0, ref index);
+        // Chest
+        ReportTrackerUpdate(animator, HumanBodyBones.Chest, 0, ref index);
+        // Elbows + Shoulders
+        ReportTrackerUpdate(animator, HumanBodyBones.LeftUpperArm, 0.5F, ref index);
+        ReportTrackerUpdate(animator, HumanBodyBones.RightUpperArm, 0.5F, ref index);
+        // Knees
+        ReportTrackerUpdate(animator, HumanBodyBones.LeftUpperLeg, 1, ref index);
+        ReportTrackerUpdate(animator, HumanBodyBones.RightUpperLeg, 1, ref index);
     }
 
-    void ReportTrackerUpdate(Animator animator, HumanBodyBones boneName, ref int index) {
-        if (ReportTrackerUpdate(animator, boneName, index.ToString())) index++;
+    void ReportTrackerUpdate(Animator animator, HumanBodyBones boneName, float lerp, ref int index) {
+        if (ReportTrackerUpdate(animator, boneName, lerp, index.ToString())) index++;
     }
 
-    bool ReportTrackerUpdate(Animator animator, HumanBodyBones boneName, string key) {
+    bool ReportTrackerUpdate(Animator animator, HumanBodyBones boneName, float lerp, string key) {
         if (boneName >= HumanBodyBones.LastBone) return false;
         var nodeTransform = animator.GetBoneTransform(boneName);
         if (nodeTransform == null) return false;
         var position = nodeTransform.position;
-        var rotation = Quaternion.identity;
+        Quaternion rotation;
         // Offset the bone reference point to middle if applicable
         if (nextBones.TryGetValue(boneName, out var nextBoneName)) {
             var nextBone = animator.GetBoneTransform(nextBoneName);
             if (nextBone != null) {
                 var nextPos = nextBone.position;
                 rotation = Quaternion.LookRotation(nextPos - position, nodeTransform.up);
-                position = (position + nextPos) / 2;
-            }
+                if (lerp > 0) position = Vector3.Lerp(position, nextPos, lerp);
+            } else
+                rotation = nodeTransform.rotation;
         } else
             rotation = nodeTransform.rotation;
         oscClient.Send($"/tracking/trackers/{key}/position", position * scale);

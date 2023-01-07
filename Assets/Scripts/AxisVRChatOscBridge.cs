@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Axis.Elements;
 using Axis.Elements.AnimatorLink;
-using Axis.Enumerations;
-using Axis.DataProcessing;
 using OscCore;
 
 public class AxisVRChatOscBridge : IDisposable {
@@ -64,7 +62,7 @@ public class AxisVRChatOscBridge : IDisposable {
                 if (mannequin != null || oscClient == null)
                     mannequin.onBodyModelAnimatorLinkUpdated -= OnDataUpdated;
                 mannequin = newMannequin;
-                if (oscClient != null)
+                if (mannequin != null && oscClient != null)
                     mannequin.onBodyModelAnimatorLinkUpdated += OnDataUpdated;
                 return;
             }

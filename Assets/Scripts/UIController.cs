@@ -9,20 +9,31 @@ public class UIController : MonoBehaviour {
     [SerializeField] Button connectVRCButton;
     [SerializeField] Button disconnectVRCButton;
     [SerializeField] TMP_Text bodyHeightDisplay;
-    [SerializeField] Button showMannequinButton;
-    [SerializeField] Button hideMannequinButton;
+    [SerializeField] TMP_Text bodyWidthDisplay;
+    [SerializeField] Toggle showMannequinButton;
     [SerializeField] Slider bodyHeightSlider;
+    [SerializeField] Slider bodyWidthSlider;
     [SerializeField] TMP_InputField ipInput;
     [SerializeField] TMP_InputField portInput;
+    [SerializeField] VRCTrackerDisplay[] displays;
+    [SerializeField, Range(0, 80)] float mannequinShoulderBreath = 42;
+    [SerializeField, Range(0, 200)] float mannequinBodyHeight = 180;
+
     AxisVRChatOscBridge bridge;
 
     void Awake() {
         connectVRCButton.onClick.AddListener(OnConnectClick);
         disconnectVRCButton.onClick.AddListener(OnDisconnectClick);
-        showMannequinButton.onClick.AddListener(OnShowMannequinClick);
-        hideMannequinButton.onClick.AddListener(OnHideMannequinClick);
+        showMannequinButton.onValueChanged.AddListener(OnToggleMannequinClick);
         bodyHeightSlider.onValueChanged.AddListener(OnBodyHeightChanged);
+        bodyWidthSlider.onValueChanged.AddListener(OnBodyWidthChanged);
         bridge = new AxisVRChatOscBridge();
+        UpdateWidthText();
+        UpdateHeightText();
+        if (displays != null)
+            foreach (var display in displays)
+                if (display != null)
+                    bridge.DataUpdated += display.DataUpdated;
     }
 
     void OnDestroy() => bridge.Disconnect();
@@ -48,21 +59,26 @@ public class UIController : MonoBehaviour {
     }
 
     void OnBodyHeightChanged(float height) {
-        bridge.Scale = height;
-        bodyHeightDisplay.text = height.ToString("0.00");
-    }
-    void OnHideMannequinClick() {
-        if (axisBrain == null) axisBrain = AxisBrain.FetchBrainOnScene();
-        axisBrain.axisMannequin.SetVisibility(false);
-        hideMannequinButton.interactable = false;
-        showMannequinButton.interactable = true;
+        bridge.ScaleY = height;
+        UpdateHeightText();
     }
 
-    void OnShowMannequinClick() {
+    void OnBodyWidthChanged(float width) {
+        bridge.ScaleX = width;
+        UpdateWidthText();
+    }
+
+    void UpdateWidthText() {
+        bodyWidthDisplay.text = (bridge.ScaleX * mannequinShoulderBreath).ToString("0.00");
+    }
+
+    void UpdateHeightText() {
+        bodyHeightDisplay.text = (bridge.ScaleY * mannequinBodyHeight).ToString("0.00");
+    }
+
+    void OnToggleMannequinClick(bool enabled) {
         if (axisBrain == null) axisBrain = AxisBrain.FetchBrainOnScene();
-        axisBrain.axisMannequin.SetVisibility(true);
-        hideMannequinButton.interactable = true;
-        showMannequinButton.interactable = false;
+        axisBrain.axisMannequin.SetVisibility(enabled);
     }
 }
 

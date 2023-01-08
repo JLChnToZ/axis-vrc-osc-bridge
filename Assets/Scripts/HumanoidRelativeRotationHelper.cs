@@ -10,7 +10,7 @@ public class HumanoidRelativeRotationHelper : MonoBehaviour {
         originRotation = new Quaternion[(int)HumanBodyBones.LastBone];
         for (var i = 0; i < (int)HumanBodyBones.LastBone; i++) {
             var boneTransform = animator.GetBoneTransform((HumanBodyBones)i);
-            if (boneTransform != null) originRotation[i] = Quaternion.Inverse(boneTransform.rotation);
+            originRotation[i] = boneTransform != null ? Quaternion.Inverse(boneTransform.rotation) : Quaternion.identity;
         }
     }
 

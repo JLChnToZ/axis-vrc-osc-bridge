@@ -121,7 +121,7 @@ public class AxisVRChatOscBridge : IDisposable {
         ReportTrackerUpdate(HumanBodyBones.LeftFoot, 0, ref index);
         ReportTrackerUpdate(HumanBodyBones.RightFoot, 0, ref index);
         // Chest
-        ReportTrackerUpdate(HumanBodyBones.Chest, 0, ref index);
+        ReportTrackerUpdate(HumanBodyBones.UpperChest, 0, ref index);
         // Elbows + Shoulders
         ReportTrackerUpdate(HumanBodyBones.LeftUpperArm, 0.5F, ref index);
         ReportTrackerUpdate(HumanBodyBones.RightUpperArm, 0.5F, ref index);
@@ -141,7 +141,7 @@ public class AxisVRChatOscBridge : IDisposable {
         var position = nodeTransform.position;
         // Get relative rotation only
         var rotation = nodeTransform.rotation;
-        if (rotation != null) rotation = rotationHelper.GetRotation(rotation, boneName);
+        if (rotationHelper != null) rotation = rotationHelper.GetRotation(rotation, boneName);
         // Offset the bone reference point to middle if applicable
         if (lerp > 0 && nextBones.TryGetValue(boneName, out var nextBoneName)) {
             var nextBone = animator.GetBoneTransform(nextBoneName);

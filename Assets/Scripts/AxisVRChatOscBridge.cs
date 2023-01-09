@@ -6,6 +6,7 @@ using Axis.Elements.AnimatorLink;
 using OscCore;
 
 public class AxisVRChatOscBridge : IDisposable {
+    const string HEAD = "head";
     static readonly Dictionary<HumanBodyBones, HumanBodyBones> nextBones = new Dictionary<HumanBodyBones, HumanBodyBones> {
         [HumanBodyBones.LeftShoulder] = HumanBodyBones.LeftUpperArm,
         [HumanBodyBones.LeftUpperArm] = HumanBodyBones.LeftLowerArm,
@@ -21,13 +22,32 @@ public class AxisVRChatOscBridge : IDisposable {
         [HumanBodyBones.RightFoot] = HumanBodyBones.RightToes,
     };
     AxisBrain axisBrain;
+    bool activated;
     float scaleX = 1F, scaleY = 1F;
     OscClient oscClient;
     AxisMannequin mannequin;
     HumanoidRelativeRotationHelper rotationHelper;
     Animator animator;
+    bool hasHead;
+    Quaternion headRotation;
+    Action<string, Vector3, Quaternion> dataUpdated;
 
-    public event Action<string, Vector3, Quaternion> DataUpdated;
+    public event Action<string, Vector3, Quaternion> DataUpdated {
+        add {
+            dataUpdated += value;
+            if (!activated && dataUpdated != null) {
+                activated = true;
+                UpdateMannequin(true);
+            }
+        }
+        remove {
+            dataUpdated -= value;
+            if (activated && dataUpdated == null) {
+                activated = false;
+                UpdateMannequin();
+            }
+        }
+    }
 
     public AxisBrain AxisBrain {
         get => axisBrain;
@@ -41,7 +61,7 @@ public class AxisVRChatOscBridge : IDisposable {
         get => (scaleX + scaleY) / 2F;
         set {
             scaleX = scaleY = value;
-            if (mannequin != null && oscClient != null)
+            if (mannequin != null && activated)
                 OnDataUpdated(mannequin.bodyModelAnimatorLink);
         }
     }
@@ -51,7 +71,7 @@ public class AxisVRChatOscBridge : IDisposable {
         set {
             if (scaleX == value) return;
             scaleX = value;
-            if (mannequin != null && oscClient != null)
+            if (mannequin != null && activated)
                 OnDataUpdated(mannequin.bodyModelAnimatorLink);
         }
     }
@@ -61,21 +81,27 @@ public class AxisVRChatOscBridge : IDisposable {
         set {
             if (scaleY == value) return;
             scaleY = value;
-            if (mannequin != null && oscClient != null)
+            if (mannequin != null && activated)
                 OnDataUpdated(mannequin.bodyModelAnimatorLink);
+        }
+    }
+
+    public bool HasHead {
+        get => hasHead;
+        set {
+            hasHead = value;
+            if (hasHead && oscClient != null) SyncHeadRotation();
         }
     }
 
     public void Connect(string ipAddr = "127.0.0.1", int port = 9000) {
         oscClient = new OscClient(ipAddr, port);
         DataUpdated += ReportToOsc;
-        UpdateMannequin(true);
     }
 
     public void Disconnect() {
         oscClient = null;
         DataUpdated -= ReportToOsc;
-        UpdateMannequin();
     }
 
     void UpdateMannequin(bool forceEnable = false) {
@@ -83,25 +109,25 @@ public class AxisVRChatOscBridge : IDisposable {
         if (axisBrain != null) {
             var newMannequin = axisBrain.axisMannequin;
             if (newMannequin != mannequin) {
-                if (mannequin != null || oscClient == null) {
+                if (mannequin != null || !activated) {
                     if (mannequin != null)
                         mannequin.onBodyModelAnimatorLinkUpdated -= OnDataUpdated;
                     rotationHelper = null;
                     animator = null;
                 }
                 mannequin = newMannequin;
-                if (mannequin != null && oscClient != null)
+                if (mannequin != null && activated)
                     mannequin.onBodyModelAnimatorLinkUpdated += OnDataUpdated;
                 return;
             }
         }
-        if (oscClient == null || forceEnable) {
+        if (!activated || forceEnable) {
             if (mannequin != null) {
                 mannequin.onBodyModelAnimatorLinkUpdated -= OnDataUpdated;
                 if (oscClient != null)
                     mannequin.onBodyModelAnimatorLinkUpdated += OnDataUpdated;
             }
-            if (oscClient == null) {
+            if (!activated) {
                 rotationHelper = null;
                 animator = null;
             }
@@ -109,12 +135,12 @@ public class AxisVRChatOscBridge : IDisposable {
     }
 
     void OnDataUpdated(BodyModelAnimatorLink animatorLink) {
-        if (oscClient == null) return;
+        if (dataUpdated == null) return;
         if (animator == null) animator = animatorLink.Animator;
         if (rotationHelper == null) rotationHelper = animatorLink.GetComponent<HumanoidRelativeRotationHelper>();
         int index = 1;
         // Head (Reference Point)
-        ReportTrackerUpdate(HumanBodyBones.Head, 0, "head");
+        ReportTrackerUpdate(HumanBodyBones.Head, 0, HEAD);
         // Hip
         ReportTrackerUpdate(HumanBodyBones.Hips, 0, ref index);
         // Feet
@@ -150,14 +176,20 @@ public class AxisVRChatOscBridge : IDisposable {
         position.x *= scaleX;
         position.y *= scaleY;
         position.z *= scaleX;
-        DataUpdated?.Invoke(key, position, rotation);
+        dataUpdated?.Invoke(key, position, rotation);
         return true;
     }
 
     void ReportToOsc(string key, Vector3 position, Quaternion rotation) {
         oscClient.Send($"/tracking/trackers/{key}/position", position);
+        if (string.Equals(key, HEAD, StringComparison.Ordinal)) {
+            headRotation = rotation;
+            if (!hasHead) return;
+        }
         oscClient.Send($"/tracking/trackers/{key}/rotation", rotation.eulerAngles);
     }
+
+    public void SyncHeadRotation() => oscClient.Send($"/tracking/trackers/{HEAD}/rotation", headRotation.eulerAngles);
 
     void IDisposable.Dispose() => Disconnect();
 }

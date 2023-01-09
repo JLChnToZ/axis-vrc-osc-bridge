@@ -11,6 +11,9 @@ public class UIController : MonoBehaviour {
     [SerializeField] TMP_Text bodyHeightDisplay;
     [SerializeField] TMP_Text bodyWidthDisplay;
     [SerializeField] Toggle showMannequinButton;
+    [SerializeField] Toggle showVRChatTrackers;
+    [SerializeField] Toggle hasTrackerToggle;
+    [SerializeField] Button manualSyncHeadButton;
     [SerializeField] Slider bodyHeightSlider;
     [SerializeField] Slider bodyWidthSlider;
     [SerializeField] TMP_InputField ipInput;
@@ -22,18 +25,17 @@ public class UIController : MonoBehaviour {
     AxisVRChatOscBridge bridge;
 
     void Awake() {
+        bridge = new AxisVRChatOscBridge();
         connectVRCButton.onClick.AddListener(OnConnectClick);
         disconnectVRCButton.onClick.AddListener(OnDisconnectClick);
         showMannequinButton.onValueChanged.AddListener(OnToggleMannequinClick);
+        showVRChatTrackers.onValueChanged.AddListener(OnShowVRCTrackerClick);
         bodyHeightSlider.onValueChanged.AddListener(OnBodyHeightChanged);
         bodyWidthSlider.onValueChanged.AddListener(OnBodyWidthChanged);
-        bridge = new AxisVRChatOscBridge();
+        hasTrackerToggle.onValueChanged.AddListener(UpdateHasTrackerToggle);
+        manualSyncHeadButton.onClick.AddListener(bridge.SyncHeadRotation);
         UpdateWidthText();
         UpdateHeightText();
-        if (displays != null)
-            foreach (var display in displays)
-                if (display != null)
-                    bridge.DataUpdated += display.DataUpdated;
     }
 
     void OnDestroy() => bridge.Disconnect();
@@ -80,5 +82,23 @@ public class UIController : MonoBehaviour {
         if (axisBrain == null) axisBrain = AxisBrain.FetchBrainOnScene();
         axisBrain.axisMannequin.SetVisibility(enabled);
     }
-}
 
+    void OnShowVRCTrackerClick(bool enabled) {
+        if (displays == null) return;
+        foreach (var display in displays) {
+            if (display == null) continue;
+            var go = display.gameObject;
+            if (go.activeSelf != enabled) {
+                go.SetActive(enabled);
+                if (enabled)
+                    bridge.DataUpdated += display.DataUpdated;
+                else
+                    bridge.DataUpdated -= display.DataUpdated;
+            }
+        }
+    }
+
+    void UpdateHasTrackerToggle(bool value) {
+        bridge.HasHead = value;
+    }
+}

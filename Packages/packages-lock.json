@@ -146,13 +146,13 @@
       }
     },
     "gg.refract.axissdk": {
-      "version": "https://github.com/Refract-Technologies/axis-sdk-unity.git",
+      "version": "https://github.com/JLChnToZ/axis-sdk-unity.git",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.learn.iet-framework": "3.1.1"
       },
-      "hash": "634d739697e054268727f913b1c493f335c01db4"
+      "hash": "59fec920148dc598864c0c4c84196e8d1db7ef91"
     },
     "com.unity.modules.androidjni": {
       "version": "1.0.0",

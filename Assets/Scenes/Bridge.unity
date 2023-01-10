@@ -8149,11 +8149,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3052634272752894216, guid: 2e873feaf118cba44b1bf0708ffccd65, type: 3}
       propertyPath: nodeBindings.Array.data[9]
-      value: 17
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 3052634272752894216, guid: 2e873feaf118cba44b1bf0708ffccd65, type: 3}
       propertyPath: nodeBindings.Array.data[10]
-      value: 17
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3052634272752894216, guid: 2e873feaf118cba44b1bf0708ffccd65, type: 3}
       propertyPath: nodeBindings.Array.data[11]

@@ -9,7 +9,7 @@
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.toolchain.win-x86_64-linux-x86_64": "2.0.4",
     "com.unity.ugui": "1.0.0",
-    "gg.refract.axissdk": "https://github.com/Refract-Technologies/axis-sdk-unity.git",
+    "gg.refract.axissdk": "https://github.com/JLChnToZ/axis-sdk-unity.git",
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.physics": "1.0.0"
   }

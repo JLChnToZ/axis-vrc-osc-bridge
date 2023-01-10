@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.stella3d.osccore": "https://github.com/vrchat/osccore.git#all-in-one",
     "com.unity.collab-proxy": "1.17.7",
     "com.unity.ide.rider": "3.0.16",
@@ -11,6 +12,7 @@
     "com.unity.ugui": "1.0.0",
     "gg.refract.axissdk": "https://github.com/JLChnToZ/axis-sdk-unity.git",
     "com.unity.modules.animation": "1.0.0",
+    "com.unity.modules.audio": "1.0.0",
     "com.unity.modules.physics": "1.0.0"
   }
 }

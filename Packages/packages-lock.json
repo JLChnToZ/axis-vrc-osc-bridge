@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.cysharp.unitask": {
+      "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "73d86259ce31ce7f4dfe1d028ea1c3edf96c23e4"
+    },
     "com.stella3d.osccore": {
       "version": "https://github.com/vrchat/osccore.git#all-in-one",
       "depth": 0,
@@ -161,6 +168,12 @@
       "dependencies": {}
     },
     "com.unity.modules.animation": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
+    },
+    "com.unity.modules.audio": {
       "version": "1.0.0",
       "depth": 0,
       "source": "builtin",

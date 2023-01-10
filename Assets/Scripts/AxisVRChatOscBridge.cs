@@ -189,7 +189,7 @@ public class AxisVRChatOscBridge : IDisposable {
         oscClient.Send($"/tracking/trackers/{key}/rotation", rotation.eulerAngles);
     }
 
-    public void SyncHeadRotation() => oscClient.Send($"/tracking/trackers/{HEAD}/rotation", headRotation.eulerAngles);
+    public void SyncHeadRotation() => oscClient?.Send($"/tracking/trackers/{HEAD}/rotation", headRotation.eulerAngles);
 
     void IDisposable.Dispose() => Disconnect();
 }

@@ -1,8 +1,10 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Axis.Elements;
+using Axis.Events;
 
 public class UIController : MonoBehaviour {
     [SerializeField] AxisBrain axisBrain;
@@ -14,6 +16,11 @@ public class UIController : MonoBehaviour {
     [SerializeField] Toggle showVRChatTrackers;
     [SerializeField] Toggle hasTrackerToggle;
     [SerializeField] Button manualSyncHeadButton;
+    [SerializeField] Button resetTrackers;
+    [SerializeField] Button zeroTrackers;
+    [SerializeField] TMP_Text manualSyncHeadText;
+    [SerializeField] TMP_Text resetTrackersText;
+    [SerializeField] TMP_Text zeroTrackersText;
     [SerializeField] Slider bodyHeightSlider;
     [SerializeField] Slider bodyWidthSlider;
     [SerializeField] TMP_InputField ipInput;
@@ -21,6 +28,8 @@ public class UIController : MonoBehaviour {
     [SerializeField] VRCTrackerDisplay[] displays;
     [SerializeField, Range(0, 80)] float mannequinShoulderBreath = 42;
     [SerializeField, Range(0, 200)] float mannequinBodyHeight = 180;
+    [SerializeField] AudioSource beep;
+    bool isZeroOrientation, isResetTrackers, isZeroTrackers;
 
     AxisVRChatOscBridge bridge;
 
@@ -31,9 +40,10 @@ public class UIController : MonoBehaviour {
         showMannequinButton.onValueChanged.AddListener(OnToggleMannequinClick);
         showVRChatTrackers.onValueChanged.AddListener(OnShowVRCTrackerClick);
         bodyHeightSlider.onValueChanged.AddListener(OnBodyHeightChanged);
-        bodyWidthSlider.onValueChanged.AddListener(OnBodyWidthChanged);
         hasTrackerToggle.onValueChanged.AddListener(UpdateHasTrackerToggle);
-        manualSyncHeadButton.onClick.AddListener(bridge.SyncHeadRotation);
+        manualSyncHeadButton.onClick.AddListener(ZeroOrientation);
+        resetTrackers.onClick.AddListener(ResetAxisTrackers);
+        zeroTrackers.onClick.AddListener(ZeroAxisTrackers);
         UpdateWidthText();
         UpdateHeightText();
     }
@@ -61,12 +71,8 @@ public class UIController : MonoBehaviour {
     }
 
     void OnBodyHeightChanged(float height) {
-        bridge.ScaleY = height;
+        bridge.Scale = height;
         UpdateHeightText();
-    }
-
-    void OnBodyWidthChanged(float width) {
-        bridge.ScaleX = width;
         UpdateWidthText();
     }
 
@@ -100,5 +106,60 @@ public class UIController : MonoBehaviour {
 
     void UpdateHasTrackerToggle(bool value) {
         bridge.HasHead = value;
+    }
+
+    void ZeroOrientation() => ZeroOrientationAsync(manualSyncHeadText).Forget();
+
+    void ResetAxisTrackers() => ResetAxisTrackersAsync(resetTrackersText).Forget();
+
+    void ZeroAxisTrackers() => ZeroAxisTrackersAsync(zeroTrackersText).Forget();
+
+    async UniTask ZeroOrientationAsync(TMP_Text display = null) {
+        if (isZeroOrientation) return;
+        isZeroOrientation = true;
+        try {
+            await CountDown(3, display);
+            bridge.SyncHeadRotation();
+        } finally {
+            isZeroOrientation = false;
+        }
+    }
+
+    async UniTask ResetAxisTrackersAsync(TMP_Text display = null) {
+        if (isResetTrackers) return;
+        isResetTrackers = true;
+        try {
+            await CountDown(3, display);
+            AxisEvents.OnReboot?.Invoke();
+        } finally {
+            isResetTrackers = false;
+        }
+    }
+
+    async UniTask ZeroAxisTrackersAsync(TMP_Text display = null) {
+        if (isZeroTrackers) return;
+        isZeroTrackers = true;
+        try {
+            await CountDown(3, display);
+            if (AxisEvents.OnZero == null) return;
+            for (int i = 0; i <= (int)Axis.Enumerations.NodeBinding.FreeNode; i++)
+                AxisEvents.OnZero(i);
+
+        } finally {
+            isZeroTrackers = false;
+        }
+    }
+
+    async UniTask CountDown(float seconds, TMP_Text display = null) {
+        string originalText = display != null ? display.text : "";
+        while (seconds >= 1) {
+            if (display != null) display.text = seconds.ToString("0");
+            beep.Play();
+            await UniTask.Delay(1000);
+            seconds--;
+        }
+        if (display != null) display.text = "0";
+        await UniTask.Delay(Mathf.FloorToInt(seconds * 1000));
+        if (display != null) display.text = originalText;
     }
 }

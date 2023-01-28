@@ -1,4 +1,4 @@
-# axis-vrc-osc-bridge
+# AXIS VRC OSC Bridge
 This is a proof-of-concept AXIS Tracker to VRChat OSC Bridge.
 [AXIS](https://axisxr.gg/) is a new full body tracker system created by [
 Refract Technologies](https://refract.gg/), this project aims to create an alternative tracker integration to [VRChat](https://hello.vrchat.com/) using the [AXIS SDK provided by Refract Technologies](https://github.com/Refract-Technologies/axis-sdk-unity/) and [OSC API supported by VRChat](https://docs.vrchat.com/docs/osc-trackers), other than SteamVR driver.

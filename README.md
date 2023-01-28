@@ -5,22 +5,19 @@ Refract Technologies](https://refract.gg/), this project aims to create an alter
 
 
 ## Demonstration
-
-Here is a footage that I first time testing the integration within Unity Editor and VRChat.
-
-https://user-images.githubusercontent.com/4715281/209565306-588c7894-ded9-435f-97d7-508176fb39d3.mp4
-
-In the actual build it does not need a Unity Editor, instead it is a standalone application (but still, the AXIS Control Center is required).
+https://user-images.githubusercontent.com/4715281/215272407-1b285307-bc83-4452-93d5-09cd29c43f0d.mp4
 
 ## How to Use
-- Just plug in, calibrate and setup your AXIS controller as written in the [official documentation](https://axisxr.gg/user-guide-manuals-documentation/).
-- Open the application downloaded from [release section](https://github.com/JLChnToZ/axis-vrc-osc-bridge/releases/latest).
-- Ensure VRChat is running with [OSC enabled](https://docs.vrchat.com/docs/osc-overview#enabling-it), it can be the same computer or different computer within the same network, or even using Quest.
-- Enter the local IP address and port of which computer/Quest device is running VRChat.
-  - If it is same computer, you may leave it `127.0.0.1` which is localhost.
+- Connect and set up your AXIS controller as instructed in the [official documentation](https://axisxr.gg/user-guide-manuals-documentation/).
+- Open the application downloaded from the [release section](https://github.com/JLChnToZ/axis-vrc-osc-bridge/releases/latest).
+- Make sure VRChat client is running with [OSC enabled](https://docs.vrchat.com/docs/osc-overview#enabling-it). The client can be running on the same computer or a different computer within the same network, or even using Quest.
+- Enter the local IP address and port of the computer/Quest device running VRChat.
+  - If it's the same computer, you can leave it as `127.0.0.1` (localhost).
   - For Quest client, you can [check your IP address in your Wi-Fi settings or SideQuest](https://smartglasseshub.com/find-quest-mac-ip-address/).
-  - The default OSC port for VRChat is `9000`, don't change the port field unless you have changed your port when launching VRChat.
-- Click connect, you should be able to toggle the full body tracking section in VRChat menu now, then you can setup the FBT in VRChat as written in [official documentation](https://docs.vrchat.com/docs/full-body-tracking#using-full-body-tracking-in-vrchat) just like the trackers has paired in SteamVR.
+  - The default OSC port for VRChat is `9000`. Don't change the port field unless you changed it when launching VRChat.
+- Click connect. You should be able to toggle the full body tracking section in the VRChat menu now. Then, you can set up FBT in VRChat as instructed in the [official documentation](https://docs.vrchat.com/docs/full-body-tracking#using-full-body-tracking-in-vrchat), just like the trackers have paired in SteamVR.
+- If your AXIS controller is set up with 16 nodes, you can try enabling "Track Head Position" for more accurate head tracking. Don't turn it on if you don't have 16 nodes set up.
+- If your body and head orientation is not synced and you don't have 16 nodes set up, you can click the "Sync Body & VR Headset Facing" button and then look straight ahead for 3 seconds to calibrate.
 
 ## License
 [MIT](LICENSE)

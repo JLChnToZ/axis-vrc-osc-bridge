@@ -14,7 +14,7 @@ public class UIController : MonoBehaviour {
     [SerializeField] TMP_Text bodyWidthDisplay;
     [SerializeField] Toggle showMannequinButton;
     [SerializeField] Toggle showVRChatTrackers;
-    [SerializeField] Toggle hasTrackerToggle;
+    [SerializeField] Toggle[] hasTrackerToggles;
     [SerializeField] Button manualSyncHeadButton;
     [SerializeField] Button resetTrackers;
     [SerializeField] Button zeroTrackers;
@@ -40,7 +40,8 @@ public class UIController : MonoBehaviour {
         showMannequinButton.onValueChanged.AddListener(OnToggleMannequinClick);
         showVRChatTrackers.onValueChanged.AddListener(OnShowVRCTrackerClick);
         bodyHeightSlider.onValueChanged.AddListener(OnBodyHeightChanged);
-        hasTrackerToggle.onValueChanged.AddListener(UpdateHasTrackerToggle);
+        foreach (var hasTrackerToggle in hasTrackerToggles)
+            hasTrackerToggle.onValueChanged.AddListener(UpdateHasTrackerToggle);
         manualSyncHeadButton.onClick.AddListener(ZeroOrientation);
         resetTrackers.onClick.AddListener(ResetAxisTrackers);
         zeroTrackers.onClick.AddListener(ZeroAxisTrackers);
@@ -96,16 +97,21 @@ public class UIController : MonoBehaviour {
             var go = display.gameObject;
             if (go.activeSelf != enabled) {
                 go.SetActive(enabled);
-                if (enabled)
-                    bridge.DataUpdated += display.DataUpdated;
-                else
-                    bridge.DataUpdated -= display.DataUpdated;
+                if (enabled) {
+                    bridge.PositionUpdated += display.DataUpdated;
+                    bridge.RotationUpdated += display.DataUpdated;
+                } else {
+                    bridge.PositionUpdated -= display.DataUpdated;
+                    bridge.RotationUpdated -= display.DataUpdated;
+                }
             }
         }
     }
 
     void UpdateHasTrackerToggle(bool value) {
-        bridge.HasHead = value;
+        manualSyncHeadButton.interactable = !hasTrackerToggles[0].isOn;
+        for (int i = 0; i < hasTrackerToggles.Length; i++)
+            bridge.SetChannelEnabled(i, hasTrackerToggles[i].isOn);
     }
 
     void ZeroOrientation() => ZeroOrientationAsync(manualSyncHeadText).Forget();

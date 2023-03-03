@@ -165,7 +165,7 @@
       "dependencies": {
         "com.unity.learn.iet-framework": "3.1.1"
       },
-      "hash": "5b28d86cd2a672b768a9db68e9f2c1a379879f4b"
+      "hash": "06cdd98628f53d6f8477d63956430cc863b21da4"
     },
     "com.unity.modules.androidjni": {
       "version": "1.0.0",

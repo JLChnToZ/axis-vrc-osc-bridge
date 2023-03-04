@@ -20,6 +20,15 @@
       "source": "builtin",
       "dependencies": {}
     },
+    "com.unity.burst": {
+      "version": "1.6.6",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.mathematics": "1.2.1"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.collab-proxy": {
       "version": "1.17.7",
       "depth": 0,
@@ -76,6 +85,13 @@
         "com.unity.editorcoroutines": "1.0.0",
         "com.unity.settings-manager": "1.0.3"
       },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.mathematics": {
+      "version": "1.2.6",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
@@ -158,6 +174,53 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "com.vrmc.gltf": {
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.108.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.vrmc.vrmshaders": "0.108.0",
+        "com.unity.modules.animation": "1.0.0"
+      },
+      "hash": "e16dd2f8c0c15fb373eeef6375c550acc740a2f6"
+    },
+    "com.vrmc.univrm": {
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.108.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.vrmc.vrmshaders": "0.108.0",
+        "com.vrmc.gltf": "0.108.0",
+        "com.unity.ugui": "1.0.0"
+      },
+      "hash": "e16dd2f8c0c15fb373eeef6375c550acc740a2f6"
+    },
+    "com.vrmc.vrm": {
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.108.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.vrmc.vrmshaders": "0.108.0",
+        "com.vrmc.gltf": "0.108.0"
+      },
+      "hash": "e16dd2f8c0c15fb373eeef6375c550acc740a2f6"
+    },
+    "com.vrmc.vrmshaders": {
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.108.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.imageconversion": "1.0.0"
+      },
+      "hash": "e16dd2f8c0c15fb373eeef6375c550acc740a2f6"
+    },
+    "com.yasirkula.simplefilebrowser": {
+      "version": "https://github.com/yasirkula/UnitySimpleFileBrowser.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "2c66392572ae9b4753f524069e14cbcbf8ab131d"
+    },
     "gg.refract.axissdk": {
       "version": "https://github.com/JLChnToZ/axis-sdk-unity.git",
       "depth": 0,
@@ -182,6 +245,12 @@
     "com.unity.modules.audio": {
       "version": "1.0.0",
       "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
+    },
+    "com.unity.modules.imageconversion": {
+      "version": "1.0.0",
+      "depth": 1,
       "source": "builtin",
       "dependencies": {}
     },

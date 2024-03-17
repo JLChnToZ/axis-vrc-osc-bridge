@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c96da0604ae85d4ea153790702f924c, type: 3}
+  m_Name: Nodes Runtime Correction Offsets
+  m_EditorClassIdentifier: 
+  rotationOffsets:
+    list:
+    - Key: 0
+      Value: {x: 0, y: 0, z: 0}
+    - Key: 1
+      Value: {x: 0, y: 0, z: 0}
+    - Key: 2
+      Value: {x: 0, y: 0, z: 0}
+    - Key: 3
+      Value: {x: 0, y: 0, z: 0}
+    - Key: 4
+      Value: {x: 0, y: 0, z: 0}
+    - Key: 5
+      Value: {x: 0, y: 0, z: 0}
+    - Key: 6
+      Value: {x: 180, y: 0, z: -180}
+    - Key: 7
+      Value: {x: 180, y: 0, z: 180}
+    - Key: 8
+      Value: {x: 0, y: -90, z: 90}
+    - Key: 9
+      Value: {x: 0, y: 0, z: 0}
+    - Key: 10
+      Value: {x: 0, y: 0, z: 0}
+    - Key: 11
+      Value: {x: 0, y: -90, z: 90}
+    - Key: 13
+      Value: {x: 0, y: 0, z: 0}
+    - Key: 14
+      Value: {x: 0, y: -90, z: 90}
+    - Key: 15
+      Value: {x: 0, y: -90, z: 90}
+    - Key: 12
+      Value: {x: 0, y: 0, z: 0}
+    - Key: 16
+      Value: {x: -90, y: 180, z: 0}
+    - Key: 17
+      Value: {x: 0, y: 0, z: 0}
+  absolutePositionOffset: {x: 0, y: 1, z: 0}

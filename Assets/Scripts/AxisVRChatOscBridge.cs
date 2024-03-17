@@ -7,20 +7,7 @@ using OscCore;
 
 public class AxisVRChatOscBridge : IDisposable {
     public const string HEAD = "head";
-    static readonly Dictionary<HumanBodyBones, HumanBodyBones> nextBones = new Dictionary<HumanBodyBones, HumanBodyBones> {
-        [HumanBodyBones.LeftShoulder] = HumanBodyBones.LeftUpperArm,
-        [HumanBodyBones.LeftUpperArm] = HumanBodyBones.LeftLowerArm,
-        [HumanBodyBones.LeftLowerArm] = HumanBodyBones.LeftHand,
-        [HumanBodyBones.LeftUpperLeg] = HumanBodyBones.LeftLowerLeg,
-        [HumanBodyBones.LeftLowerLeg] = HumanBodyBones.LeftFoot,
-        [HumanBodyBones.LeftFoot] = HumanBodyBones.LeftToes,
-        [HumanBodyBones.RightShoulder] = HumanBodyBones.RightUpperArm,
-        [HumanBodyBones.RightUpperArm] = HumanBodyBones.RightLowerArm,
-        [HumanBodyBones.RightLowerArm] = HumanBodyBones.RightHand,
-        [HumanBodyBones.RightUpperLeg] = HumanBodyBones.RightLowerLeg,
-        [HumanBodyBones.RightLowerLeg] = HumanBodyBones.RightFoot,
-        [HumanBodyBones.RightFoot] = HumanBodyBones.RightToes,
-    };
+    static readonly Dictionary<HumanBodyBones, HumanBodyBones> nextBones;
     static readonly string[] oscChannelNames = new[] { HEAD, "1", "2", "3", "4", "5", "6", "7", "8" };
     AxisBrain axisBrain;
     bool activated;
@@ -216,4 +203,12 @@ public class AxisVRChatOscBridge : IDisposable {
     public void SyncHeadRotation() => oscClient?.Send($"/tracking/trackers/{HEAD}/rotation", headRotation.eulerAngles);
 
     void IDisposable.Dispose() => Disconnect();
+
+    static AxisVRChatOscBridge() {
+        nextBones = new Dictionary<HumanBodyBones, HumanBodyBones>();
+        for (int i = 0, c = HumanTrait.BoneCount; i < c; i++) {
+            int parent = HumanTrait.GetParentBone(i);
+            if (parent >= 0) nextBones[(HumanBodyBones)parent] = (HumanBodyBones)i;
+        }
+    }
 }

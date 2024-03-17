@@ -2,32 +2,37 @@ using UnityEngine;
 
 public class VRCTrackerDisplay : MonoBehaviour {
     [SerializeField] int channel;
+    [SerializeField] int materialIndex;
+    [SerializeField] Color connectedColor, disconnectedColor;
+    [SerializeField] float notUpdatedTimeout = 1;
+    float updatingTime;
     new Renderer renderer;
     MaterialPropertyBlock propertyBlock;
-    static int lastIndicatorId;
+    static int colorId;
 
     void Awake() {
-        if (lastIndicatorId == 0) lastIndicatorId = Shader.PropertyToID("_LastUpdateTime");
+        if (colorId == 0) colorId = Shader.PropertyToID("_Color");
         renderer = GetComponentInChildren<Renderer>(true);
         propertyBlock = new MaterialPropertyBlock();
+    }
+
+    void Update() {
+        updatingTime += Time.deltaTime;
+        if (renderer != null) {
+            propertyBlock.SetColor(colorId, updatingTime > notUpdatedTimeout ? disconnectedColor : connectedColor);
+            renderer.SetPropertyBlock(propertyBlock, materialIndex);
+        }
     }
 
     public void DataUpdated(int key, Vector3 position) {
         if (key != channel) return;
         transform.position = position;
-        Flash();
+        updatingTime = 0;
     }
 
     public void DataUpdated(int key, Quaternion rotation) {
         if (key != channel) return;
         transform.rotation = rotation;
-        Flash();
-    }
-
-    void Flash() {
-        if (renderer != null) {
-            propertyBlock.SetFloat(lastIndicatorId, Time.timeSinceLevelLoad);
-            renderer.SetPropertyBlock(propertyBlock);
-        }
+        updatingTime = 0;
     }
 }

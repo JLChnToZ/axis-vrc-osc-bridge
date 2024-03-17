@@ -1,0 +1,19 @@
+{
+    "name": "refract.AxisSDK",
+    "rootNamespace": "",
+    "references": [
+        "refract.better_log",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "!DISABLE_AXIS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

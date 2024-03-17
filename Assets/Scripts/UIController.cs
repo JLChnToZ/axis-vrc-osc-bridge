@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Axis.Elements;
 using Axis.Events;
+using Axis.Enumerations;
 
 public class UIController : MonoBehaviour {
     [SerializeField] AxisBrain axisBrain;
@@ -16,8 +17,9 @@ public class UIController : MonoBehaviour {
     [SerializeField] Toggle showVRChatTrackers;
     [SerializeField] Toggle[] hasTrackerToggles;
     [SerializeField] Button manualSyncHeadButton;
-    [SerializeField] Button resetTrackers;
+    [SerializeField] Button calibrateTrackers;
     [SerializeField] Button zeroTrackers;
+    [SerializeField] Toggle hipsModeToggle;
     [SerializeField] TMP_Text manualSyncHeadText;
     [SerializeField] TMP_Text resetTrackersText;
     [SerializeField] TMP_Text zeroTrackersText;
@@ -43,8 +45,9 @@ public class UIController : MonoBehaviour {
         foreach (var hasTrackerToggle in hasTrackerToggles)
             hasTrackerToggle.onValueChanged.AddListener(UpdateHasTrackerToggle);
         manualSyncHeadButton.onClick.AddListener(ZeroOrientation);
-        resetTrackers.onClick.AddListener(ResetAxisTrackers);
+        calibrateTrackers.onClick.AddListener(CalibrateAxisTrackers);
         zeroTrackers.onClick.AddListener(ZeroAxisTrackers);
+        hipsModeToggle.onValueChanged.AddListener(OnToggleHipsModeClick);
         UpdateWidthText();
         UpdateHeightText();
     }
@@ -116,9 +119,14 @@ public class UIController : MonoBehaviour {
 
     void ZeroOrientation() => ZeroOrientationAsync(manualSyncHeadText).Forget();
 
-    void ResetAxisTrackers() => ResetAxisTrackersAsync(resetTrackersText).Forget();
+    void CalibrateAxisTrackers() => CalibrateAxisTrackersAsync(resetTrackersText).Forget();
 
     void ZeroAxisTrackers() => ZeroAxisTrackersAsync(zeroTrackersText).Forget();
+
+    void OnToggleHipsModeClick(bool enabled) {
+        if (axisBrain == null) axisBrain = AxisBrain.FetchBrainOnScene();
+        axisBrain.hipProvider = enabled ? HipProvider.Node : HipProvider.Hub;
+    }
 
     async UniTask ZeroOrientationAsync(TMP_Text display = null) {
         if (isZeroOrientation) return;
@@ -131,12 +139,12 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    async UniTask ResetAxisTrackersAsync(TMP_Text display = null) {
+    async UniTask CalibrateAxisTrackersAsync(TMP_Text display = null) {
         if (isResetTrackers) return;
         isResetTrackers = true;
         try {
             await CountDown(3, display);
-            AxisEvents.OnReboot?.Invoke();
+            AxisEvents.OnCalibration?.Invoke();
         } finally {
             isResetTrackers = false;
         }
@@ -147,10 +155,7 @@ public class UIController : MonoBehaviour {
         isZeroTrackers = true;
         try {
             await CountDown(3, display);
-            if (AxisEvents.OnZero == null) return;
-            for (int i = 0; i <= (int)Axis.Enumerations.NodeBinding.FreeNode; i++)
-                AxisEvents.OnZero(i);
-
+            AxisEvents.OnZeroAll?.Invoke();
         } finally {
             isZeroTrackers = false;
         }

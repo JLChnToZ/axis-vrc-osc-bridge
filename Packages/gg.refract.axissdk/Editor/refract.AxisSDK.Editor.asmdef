@@ -1,0 +1,20 @@
+{
+    "name": "refract.AxisSDK.Editor",
+    "rootNamespace": "",
+    "references": [
+        "refract.AxisSDK"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "!DISABLE_AXIS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -7,8 +7,8 @@ public class HumanoidRelativeRotationHelper : MonoBehaviour {
 
     void Awake() {
         animator = GetComponent<Animator>();
-        originRotation = new Quaternion[(int)HumanBodyBones.LastBone];
-        for (var i = 0; i < (int)HumanBodyBones.LastBone; i++) {
+        originRotation = new Quaternion[HumanTrait.BoneCount];
+        for (int i = 0; i < originRotation.Length; i++) {
             var boneTransform = animator.GetBoneTransform((HumanBodyBones)i);
             originRotation[i] = boneTransform != null ? Quaternion.Inverse(boneTransform.rotation) : Quaternion.identity;
         }

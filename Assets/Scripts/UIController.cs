@@ -32,22 +32,38 @@ public class UIController : MonoBehaviour {
     [SerializeField, Range(0, 200)] float mannequinBodyHeight = 180;
     [SerializeField] AudioSource beep;
     bool isZeroOrientation, isResetTrackers, isZeroTrackers;
+    string defaultIp;
+    int defaultPort;
 
     AxisVRChatOscBridge bridge;
 
     void Awake() {
         bridge = new AxisVRChatOscBridge();
+        defaultIp = ipInput.text;
+        ipInput.PersistentMemorize("ip");
+        int.TryParse(portInput.text, out defaultPort);
+        portInput.PersistentMemorize("port");
         connectVRCButton.onClick.AddListener(OnConnectClick);
         disconnectVRCButton.onClick.AddListener(OnDisconnectClick);
         showMannequinButton.onValueChanged.AddListener(OnToggleMannequinClick);
         showVRChatTrackers.onValueChanged.AddListener(OnShowVRCTrackerClick);
+        bodyHeightSlider.PersistentMemorize("bodyHeight");
         bodyHeightSlider.onValueChanged.AddListener(OnBodyHeightChanged);
-        foreach (var hasTrackerToggle in hasTrackerToggles)
-            hasTrackerToggle.onValueChanged.AddListener(UpdateHasTrackerToggle);
+        bridge.Scale = bodyHeightSlider.value;
+        hasTrackerToggles.PersistentMemorize("trackers");
+        hasTrackerToggles[0].onValueChanged.AddListener(OnFirstTrackerToggleClick);
+        for (int i = 0; i < hasTrackerToggles.Length; i++) {
+            var t = hasTrackerToggles[i];
+            int index = i;
+            t.onValueChanged.AddListener(isOn => bridge.SetChannelEnabled(index, isOn));
+            bridge.SetChannelEnabled(index, t.isOn);
+        }
         manualSyncHeadButton.onClick.AddListener(ZeroOrientation);
         calibrateTrackers.onClick.AddListener(CalibrateAxisTrackers);
         zeroTrackers.onClick.AddListener(ZeroAxisTrackers);
+        hipsModeToggle.PersistentMemorize("hipsMode");
         hipsModeToggle.onValueChanged.AddListener(OnToggleHipsModeClick);
+        axisBrain.hipProvider = hipsModeToggle.isOn ? HipProvider.Node : HipProvider.Hub;
         UpdateWidthText();
         UpdateHeightText();
     }
@@ -56,6 +72,8 @@ public class UIController : MonoBehaviour {
 
     void OnConnectClick() {
         try {
+            if (string.IsNullOrWhiteSpace(ipInput.text)) ipInput.text = defaultIp;
+            if (string.IsNullOrWhiteSpace(portInput.text)) portInput.text = defaultPort.ToString();
             bridge.Connect(ipInput.text, int.Parse(portInput.text));
             connectVRCButton.interactable = false;
             ipInput.interactable = false;
@@ -111,10 +129,9 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    void UpdateHasTrackerToggle(bool value) {
-        manualSyncHeadButton.interactable = !hasTrackerToggles[0].isOn;
-        for (int i = 0; i < hasTrackerToggles.Length; i++)
-            bridge.SetChannelEnabled(i, hasTrackerToggles[i].isOn);
+    void OnFirstTrackerToggleClick(bool enabled) {
+        if (manualSyncHeadButton == null) return;
+        manualSyncHeadButton.interactable = !enabled;
     }
 
     void ZeroOrientation() => ZeroOrientationAsync(manualSyncHeadText).Forget();

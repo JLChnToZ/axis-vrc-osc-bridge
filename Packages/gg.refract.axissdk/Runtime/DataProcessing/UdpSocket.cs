@@ -25,6 +25,7 @@ namespace Axis.Communication
         protected byte[] DataInBytes;
         protected bool DataWaitingForProcessing = false;
         private UdpClient _dataClient;
+        private CancellationTokenSource _threadCancellation;
 
         protected Thread MessageReceiveThread;
         protected byte[] MessageInBytes;
@@ -73,14 +74,14 @@ namespace Axis.Communication
        
         private void StartRawDataReceiveThread(Socket rawDataSocket)
         {
-            RawDataReceiveThread = new Thread(() => ReceiveRawData(rawDataSocket));
-            RawDataReceiveThread.IsBackground = true;
+            if (_threadCancellation == null) _threadCancellation = new CancellationTokenSource();
+            RawDataReceiveThread = new Thread(() => ReceiveRawData(rawDataSocket, _threadCancellation.Token));
             RawDataReceiveThread.Start();
         }
         private void StartMessageReceiveThread(Socket messageSocket)
         {
-            MessageReceiveThread = new Thread(() => ReceiveMessage(messageSocket));
-            MessageReceiveThread.IsBackground = true;
+            if (_threadCancellation == null) _threadCancellation = new CancellationTokenSource();
+            MessageReceiveThread = new Thread(() => ReceiveMessage(messageSocket, _threadCancellation.Token));
             MessageReceiveThread.Start();
         }
         private Socket CreateMessageReceivingSocket()
@@ -93,6 +94,7 @@ namespace Axis.Communication
             messageSocket.Bind(_messageDataIp);
             messageSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership,
                 new MulticastOption(messageAddress, IPAddress.Any));
+            messageSocket.Blocking = false;
             return messageSocket;
 
         }
@@ -105,23 +107,30 @@ namespace Axis.Communication
             rawDataSocket.Bind(_rawDataIp);
             rawDataSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership,
                 new MulticastOption(rawDataGroupAddress, IPAddress.Any));
+            rawDataSocket.Blocking = false;
             return rawDataSocket;
         }
         
         // Receive data, update packets received
-        private void ReceiveRawData(Socket socket)
+        private void ReceiveRawData(Socket socket, CancellationToken cancelToken)
         {
+            var buffer = new byte[1024];
            // Debug.Log("Test");
-            while (RawDataReceiveThread != null && RawDataReceiveThread.IsAlive)
+            while (!cancelToken.IsCancellationRequested)
             {            
                 try
                 {                   
                     EndPoint remoteEp = new IPEndPoint(IPAddress.Any, 0);
 
-                    var buffer = new byte[1024];
                     var bytesRead = socket.ReceiveFrom(buffer, ref remoteEp);
+
+                    cancelToken.ThrowIfCancellationRequested();
                     
-                    if (bytesRead <= 0) continue;
+                    if (bytesRead <= 0)
+                    {
+                        Thread.Sleep(1);
+                        continue;
+                    }
                     
                     DataInBytes = new byte[bytesRead];
                     Array.Copy(buffer, DataInBytes, bytesRead);
@@ -134,21 +143,25 @@ namespace Axis.Communication
 
                     //ProcessInput(dataInBytes);
                 }
+                catch (ThreadAbortException)
+                {
+                    Thread.ResetAbort();
+                    break;
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
                 catch (Exception err)
                 {
-                    if (err is ThreadAbortException)
-                    {
-                    }
-                    else
-                    {
-                        print(err.ToString());
-                    }
+                    Debug.LogException(err);
                 }
             }
         }
-        private void ReceiveMessage(Socket socket)
+        private void ReceiveMessage(Socket socket, CancellationToken cancelToken)
         {
-            while (MessageReceiveThread != null && MessageReceiveThread.IsAlive)
+            var buffer = new byte[1024];
+            while (!cancelToken.IsCancellationRequested)
             {
                 //try
                 //{
@@ -169,27 +182,35 @@ namespace Axis.Communication
                 try
                 {
                     EndPoint remoteEp = new IPEndPoint(IPAddress.Any, 0);
-                
-                    var buffer = new byte[1024];
 
                     var bytesRead = socket.ReceiveFrom(buffer, ref remoteEp);
+
+                    cancelToken.ThrowIfCancellationRequested();
+
                     //Debug.Log("Getting message");
-                    if (bytesRead <= 0) continue;
+                    if (bytesRead <= 0)
+                    {
+                        Thread.Sleep(1);
+                        continue;
+                    }
                     
                     MessageInBytes = new byte[bytesRead];
                     Array.Copy(buffer, MessageInBytes, bytesRead);
                     MessageWaitingForProcessing = true;
 
                 }
+                catch (ThreadAbortException)
+                {
+                    Thread.ResetAbort();
+                    break;
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
                 catch (Exception err)
                 {
-                    if (err is ThreadAbortException)
-                    {
-                    }
-                    else
-                    {
-                        print(err.ToString());
-                    }
+                    Debug.LogException(err);
                 }
             }
         }
@@ -197,6 +218,11 @@ namespace Axis.Communication
         //Prevent crashes - close clients and threads properly!
         protected void StopReceivingThread()
         {
+            if (_threadCancellation != null)
+            {
+                _threadCancellation.Cancel();
+                _threadCancellation = null;
+            }
             if (RawDataReceiveThread != null)
             {
                 RawDataReceiveThread.Abort();

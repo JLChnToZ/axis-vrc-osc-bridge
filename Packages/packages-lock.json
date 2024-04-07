@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "64792b672d35e43b3412fc74861f8bdbf41e3a6f"
     },
+    "com.mischief.markdownviewer": {
+      "version": "https://github.com/gwaredd/UnityMarkdownViewer.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "d4a969bb6f29adff8830f4226cad9a81b4b0a6af"
+    },
     "com.stella3d.osccore": {
       "version": "https://github.com/vrchat/osccore.git#all-in-one",
       "depth": 0,
@@ -20,21 +27,13 @@
       "source": "builtin",
       "dependencies": {}
     },
-    "com.unity.ai.navigation": {
-      "version": "1.1.4",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.modules.ai": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
-    },
     "com.unity.burst": {
-      "version": "1.8.7",
+      "version": "1.8.13",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.mathematics": "1.2.1"
+        "com.unity.mathematics": "1.2.1",
+        "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -217,12 +216,6 @@
       "dependencies": {
         "com.unity.learn.iet-framework": "3.1.1"
       }
-    },
-    "com.unity.modules.ai": {
-      "version": "1.0.0",
-      "depth": 1,
-      "source": "builtin",
-      "dependencies": {}
     },
     "com.unity.modules.androidjni": {
       "version": "1.0.0",

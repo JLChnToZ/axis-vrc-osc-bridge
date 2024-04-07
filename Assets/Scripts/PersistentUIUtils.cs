@@ -7,7 +7,8 @@ public static class PersistentUIUtils {
     public static void PersistentMemorize(this Slider slider, string key) {
         if (slider == null) throw new ArgumentNullException(nameof(slider));
         if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
-        slider.SetValueWithoutNotify(PlayerPrefs.GetFloat(key, slider.value));
+        if (PlayerPrefs.HasKey(key))
+            slider.value = PlayerPrefs.GetFloat(key, slider.value);
         slider.onValueChanged.AddListener(v => {
             PlayerPrefs.SetFloat(key, v);
             PlayerPrefs.Save();
@@ -17,7 +18,8 @@ public static class PersistentUIUtils {
     public static void PersistentMemorize(this Toggle toggle, string key) {
         if (toggle == null) throw new ArgumentNullException(nameof(toggle));
         if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
-        toggle.SetIsOnWithoutNotify(PlayerPrefs.GetInt(key, toggle.isOn ? 1 : 0) == 1);
+        if (PlayerPrefs.HasKey(key))
+            toggle.isOn = PlayerPrefs.GetInt(key, toggle.isOn ? 1 : 0) == 1;
         toggle.onValueChanged.AddListener(v => {
             PlayerPrefs.SetInt(key, v ? 1 : 0);
             PlayerPrefs.Save();
@@ -32,8 +34,11 @@ public static class PersistentUIUtils {
         if (PlayerPrefs.HasKey(key)) {
             value = PlayerPrefs.GetInt(key);
             for (int i = 0; i < toggles.Length; i++)
-                if (toggles[i] != null)
-                    toggles[i].SetIsOnWithoutNotify((value & (1 << i)) != 0);
+                if (toggles[i] != null) {
+                    var isOn = (value & (1 << i)) != 0;
+                    if (toggles[i].isOn != isOn)
+                        toggles[i].isOn = isOn;
+                }
         } else {
             for (int i = 0; i < toggles.Length; i++)
                 if (toggles[i] != null && toggles[i].isOn)
@@ -55,7 +60,8 @@ public static class PersistentUIUtils {
     public static void PersistentMemorize(this InputField inputField, string key) {
         if (inputField == null) throw new ArgumentNullException(nameof(inputField));
         if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
-        inputField.text = PlayerPrefs.GetString(key, inputField.text);
+        if (PlayerPrefs.HasKey(key))
+            inputField.text = PlayerPrefs.GetString(key, inputField.text);
         inputField.onEndEdit.AddListener(v => {
             PlayerPrefs.SetString(key, v);
             PlayerPrefs.Save();
@@ -65,7 +71,8 @@ public static class PersistentUIUtils {
     public static void PersistentMemorize(this TMP_InputField inputField, string key) {
         if (inputField == null) throw new ArgumentNullException(nameof(inputField));
         if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
-        inputField.text = PlayerPrefs.GetString(key, inputField.text);
+        if (PlayerPrefs.HasKey(key))
+            inputField.text = PlayerPrefs.GetString(key, inputField.text);
         inputField.onEndEdit.AddListener(v => {
             PlayerPrefs.SetString(key, v);
             PlayerPrefs.Save();

@@ -40,32 +40,34 @@ public class UIController : MonoBehaviour {
     void Awake() {
         bridge = new AxisVRChatOscBridge();
         defaultIp = ipInput.text;
-        ipInput.PersistentMemorize("ip");
         int.TryParse(portInput.text, out defaultPort);
-        portInput.PersistentMemorize("port");
         connectVRCButton.onClick.AddListener(OnConnectClick);
         disconnectVRCButton.onClick.AddListener(OnDisconnectClick);
         showMannequinButton.onValueChanged.AddListener(OnToggleMannequinClick);
         showVRChatTrackers.onValueChanged.AddListener(OnShowVRCTrackerClick);
-        bodyHeightSlider.PersistentMemorize("bodyHeight");
         bodyHeightSlider.onValueChanged.AddListener(OnBodyHeightChanged);
-        bridge.Scale = bodyHeightSlider.value;
-        hasTrackerToggles.PersistentMemorize("trackers");
         hasTrackerToggles[0].onValueChanged.AddListener(OnFirstTrackerToggleClick);
         for (int i = 0; i < hasTrackerToggles.Length; i++) {
             var t = hasTrackerToggles[i];
             int index = i;
             t.onValueChanged.AddListener(isOn => bridge.SetChannelEnabled(index, isOn));
-            bridge.SetChannelEnabled(index, t.isOn);
         }
         manualSyncHeadButton.onClick.AddListener(ZeroOrientation);
         calibrateTrackers.onClick.AddListener(CalibrateAxisTrackers);
         zeroTrackers.onClick.AddListener(ZeroAxisTrackers);
-        hipsModeToggle.PersistentMemorize("hipsMode");
         hipsModeToggle.onValueChanged.AddListener(OnToggleHipsModeClick);
-        axisBrain.hipProvider = hipsModeToggle.isOn ? HipProvider.Node : HipProvider.Hub;
         UpdateWidthText();
         UpdateHeightText();
+        RestoreValues().Forget();
+    }
+
+    async UniTaskVoid RestoreValues() {
+        await UniTask.Yield();
+        ipInput.PersistentMemorize("ip");
+        portInput.PersistentMemorize("port");
+        bodyHeightSlider.PersistentMemorize("bodyHeight");
+        hasTrackerToggles.PersistentMemorize("trackers");
+        hipsModeToggle.PersistentMemorize("hipsMode");
     }
 
     void OnDestroy() => bridge.Disconnect();

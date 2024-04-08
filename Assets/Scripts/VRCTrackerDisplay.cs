@@ -14,6 +14,7 @@ public class VRCTrackerDisplay : MonoBehaviour {
         if (colorId == 0) colorId = Shader.PropertyToID("_Color");
         renderer = GetComponentInChildren<Renderer>(true);
         propertyBlock = new MaterialPropertyBlock();
+        updatingTime = notUpdatedTimeout;
     }
 
     void Update() {
@@ -21,6 +22,7 @@ public class VRCTrackerDisplay : MonoBehaviour {
         if (renderer != null) {
             propertyBlock.SetColor(colorId, updatingTime > notUpdatedTimeout ? disconnectedColor : connectedColor);
             renderer.SetPropertyBlock(propertyBlock, materialIndex);
+            renderer.enabled = updatingTime <= notUpdatedTimeout;
         }
     }
 

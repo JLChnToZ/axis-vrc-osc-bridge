@@ -122,6 +122,12 @@ namespace Axis.Communication
                 {                   
                     EndPoint remoteEp = new IPEndPoint(IPAddress.Any, 0);
 
+                    if (socket.Available <= 0)
+                    {
+                        Thread.Sleep(1);
+                        continue;
+                    }
+
                     var bytesRead = socket.ReceiveFrom(buffer, ref remoteEp);
 
                     cancelToken.ThrowIfCancellationRequested();
@@ -182,6 +188,12 @@ namespace Axis.Communication
                 try
                 {
                     EndPoint remoteEp = new IPEndPoint(IPAddress.Any, 0);
+
+                    if (socket.Available <= 0)
+                    {
+                        Thread.Sleep(1);
+                        continue;
+                    }
 
                     var bytesRead = socket.ReceiveFrom(buffer, ref remoteEp);
 
